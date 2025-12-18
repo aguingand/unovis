@@ -271,7 +271,7 @@ export class XYContainer<Datum> extends ContainerCore {
     if (crosshair) {
       // Pass accessors
       const yAccessors = this.components.filter(c => !c.stacked).map(c => c.config.y)
-      const yStackedAccessors = this.components.filter(c => c.stacked).map(c => c.config.y)
+      const yStackedAccessors = this.components.filter(c => c.stacked).map(c => Array.isArray(c.config.y) ? c.config.y : [c.config.y])
       const baselineComponentConfig = this.components.find(c => (c.config as AreaConfigInterface<Datum>).baseline)?.config as AreaConfigInterface<Datum>
       const baselineAccessor = baselineComponentConfig?.baseline
 
@@ -279,7 +279,7 @@ export class XYContainer<Datum> extends ContainerCore {
       crosshair.accessors = {
         x: this.components[0]?.config.x,
         y: flatten(yAccessors),
-        yStacked: flatten(yStackedAccessors),
+        yStacked: yStackedAccessors,
         baseline: baselineAccessor,
       }
 

@@ -56,7 +56,7 @@ export class Crosshair<Datum> extends XYComponentCore<Datum, CrosshairConfigInte
     const x = hasConfig ? config.x : this._accessors.x
     const yAcc = hasConfig ? config.y : this._accessors.y
     const y = yAcc ? (isArray(yAcc) ? yAcc : [yAcc]) : undefined
-    const yStacked = hasConfig ? config.yStacked : this._accessors.yStacked
+    const yStacked = hasConfig ? [config.yStacked] : this._accessors.yStacked
     const baseline = config.baseline ?? this._accessors.baseline
 
     return { x, y, yStacked, baseline }
@@ -295,14 +295,16 @@ export class Crosshair<Datum> extends XYComponentCore<Datum, CrosshairConfigInte
       const yAccessors = this.accessors.y ?? []
       const yStackedAccessors = this.accessors.yStacked ?? []
       const baselineValue = getNumber(datum, this.accessors.baseline, datumIndex) || 0
-      const stackedValues: CrosshairCircle[] = getStackedValues(datum, datumIndex, ...yStackedAccessors)
-        .map((value, index) => ({
-          y: this.yScale(value + baselineValue),
-          opacity: isNumber(getNumber(datum, yStackedAccessors[index], index)) ? 1 : 0,
-          color: getColor(datum, config.color, index),
-          strokeColor: config.strokeColor ? getColor(datum, config.strokeColor, index) : undefined,
-          strokeWidth: config.strokeWidth ? getNumber(datum, config.strokeWidth, index) : undefined,
-        }))
+      const stackedValues: CrosshairCircle[] = yStackedAccessors.map((componentYStackedAccessors) =>
+        getStackedValues(datum, datumIndex, ...componentYStackedAccessors)
+          .map((value, index) => ({
+            y: this.yScale(value + baselineValue),
+            opacity: isNumber(getNumber(datum, componentYStackedAccessors[index], index)) ? 1 : 0,
+            color: getColor(datum, config.color, index),
+            strokeColor: config.strokeColor ? getColor(datum, config.strokeColor, index) : undefined,
+            strokeWidth: config.strokeWidth ? getNumber(datum, config.strokeWidth, index) : undefined,
+          }))
+      ).flat()
 
       const regularValues: CrosshairCircle[] = yAccessors
         .map((a, index) => {

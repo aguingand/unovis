@@ -12,6 +12,6 @@ export type CrosshairCircle = {
 export type CrosshairAccessors<Datum> = {
   x: NumericAccessor<Datum> | undefined;
   y: NumericAccessor<Datum>[] | undefined;
-  yStacked: NumericAccessor<Datum>[] | undefined;
+  yStacked: NumericAccessor<Datum>[][] | undefined;
   baseline: NumericAccessor<Datum> | undefined;
 }
